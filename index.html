@@ -54,12 +54,6 @@ details[open] summary::after{content:"–"}
 </style>
 
 </head>
-<script>
-function gc(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(x){}}
-document.getElementById("out").addEventListener("toggle",function(ev){var d=ev.target;if(d.open&&!q.value.trim())gc("drink: "+d.querySelector(".n").textContent,"Drink opened")},true);
-var st;q.addEventListener("input",function(){clearTimeout(st);st=setTimeout(function(){var v=q.value.trim().toLowerCase();if(v.length>2)gc("search: "+v,"Search")},1500)});
-</script>
-<script data-goatcounter="https://jejo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <body style="margin:0">
 <div class="wrap">
   <h1>Lounge Cocktail Cheat Sheet</h1>
@@ -161,9 +155,11 @@ function filter(){
 q.addEventListener("input",filter);
 </script>
 <script>
-function gc(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(x){}}
-document.getElementById("out").addEventListener("toggle",function(ev){var d=ev.target;if(d.open&&!q.value.trim())gc("drink: "+d.querySelector(".n").textContent,"Drink opened")},true);
-var st;q.addEventListener("input",function(){clearTimeout(st);st=setTimeout(function(){var v=q.value.trim().toLowerCase();if(v.length>2)gc("search: "+v,"Search")},1500)});
+// One GoatCounter row per action; the detail (drink / search term) goes in the referrer so it shows as a breakdown when the row is clicked.
+function gc(p,t,r){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,referrer:r,event:true})}catch(x){}}
+var seen={};
+document.getElementById("out").addEventListener("toggle",function(ev){var d=ev.target;if(d.open&&!q.value.trim())gc("lounge-drink-opened","Drink opened",d.querySelector(".n").textContent.trim())},true);
+var st;q.addEventListener("input",function(){clearTimeout(st);st=setTimeout(function(){var v=q.value.trim().toLowerCase();if(v.length>2&&!seen[v]){seen[v]=1;gc("lounge-search","Lounge searches",v)}},1500)});
 </script>
 <script data-goatcounter="https://jejo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
