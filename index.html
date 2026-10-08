@@ -1,431 +1,164 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UK Cash Calculator</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 12px 0}
-    .container{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);padding:24px 20px;width:100%;max-width:640px}
-    h1{font-size:1.3rem;color:#1a1a2e;margin-bottom:4px}
-    .subtitle{color:#6b7280;font-size:.82rem;margin-bottom:20px}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lounge Cocktail Cheat Sheet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<style>
+/* Layout: one phone-width column. Sticky search, then family sections; each opens with the shared build, then full recipes. */
+:root{
+  --bg:#f3f5f1; --card:#ffffff; --fg:#16211c; --muted:#56655d; --line:#d5dcd4;
+  --accent:#0f6b4f; --accent-soft:#dcefe6; --af:#8a3d00; --af-soft:#fde9d2; --warn:#8f1d2c; --warn-soft:#fbe1e4;
+  --display:"Bricolage Grotesque",system-ui,sans-serif; --body:"Atkinson Hyperlegible",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101613; --card:#1a2420; --fg:#edf2ee; --muted:#a3b1a9; --line:#2f3d36;
+  --accent:#6fd3ac; --accent-soft:#17382c; --af:#ffb873; --af-soft:#3d2a14; --warn:#ff9aa6; --warn-soft:#42191f; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101613; --card:#1a2420; --fg:#edf2ee; --muted:#a3b1a9; --line:#2f3d36;
+  --accent:#6fd3ac; --accent-soft:#17382c; --af:#ffb873; --af-soft:#3d2a14; --warn:#ff9aa6; --warn-soft:#42191f; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.45}
+.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
+h1{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;font-size:.95rem}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px;margin-top:8px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+#q{width:100%;font:inherit;font-size:1.1rem;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--fg)}
+#q:focus-visible,.chip:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{flex:none;font:inherit;font-weight:700;font-size:.95rem;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.rule{background:var(--af-soft);color:var(--af);border-radius:12px;padding:12px 14px;margin-top:16px;font-weight:700}
+section{margin-top:26px;scroll-margin-top:150px}
+h2{font-family:var(--display);font-weight:800;font-size:1.45rem;margin:0 0 10px}
+.pattern{background:var(--accent-soft);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.pattern b.t{font-family:var(--display);color:var(--accent);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+.pattern ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px}
+.list{display:flex;flex-direction:column;gap:10px}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px}
+summary{list-style:none;cursor:pointer;padding:14px;display:flex;align-items:center;gap:10px;border-radius:14px}
+summary::-webkit-details-marker{display:none}
+summary .n{font-family:var(--display);font-weight:600;font-size:1.2rem;line-height:1.2;flex:1;min-width:0}
+summary::after{content:"+";font-size:1.5rem;line-height:1;color:var(--muted);font-weight:700}
+details[open] summary::after{content:"–"}
+.af{flex:none;background:var(--af-soft);color:var(--af);font-weight:700;font-size:.75rem;letter-spacing:.06em;padding:3px 8px;border-radius:6px}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+.ing{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:1.1rem}
+.ing li{display:grid;grid-template-columns:5.2em 1fr;gap:8px}
+.ing .a{font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent)}
+.meta{display:grid;grid-template-columns:5.2em 1fr;gap:5px 8px;margin:0;padding-top:12px;border-top:1px solid var(--line)}
+.meta dt{color:var(--muted);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;padding-top:.2em}
+.meta dd{margin:0}
+.check{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:.95rem}
+#none{margin-top:28px;color:var(--muted);text-align:center}
+</style>
 
-    .section-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#fff;padding:5px 12px;border-radius:20px;margin-bottom:12px;display:inline-block}
-    .section-title.coins{background:#6366f1}
-    .section-title.notes{background:#0ea5e9}
-
-    .table-header{display:grid;gap:8px;padding:0 4px 8px;border-bottom:2px solid #e5e7eb;margin-bottom:8px}
-    .coins-header{grid-template-columns:58px 1fr 62px 72px}
-    .notes-header{grid-template-columns:58px 1fr 72px}
-    .table-header span{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9ca3af}
-
-    .coin-grid,.notes-grid{display:grid;gap:6px;margin-bottom:20px}
-    .coin-row{display:grid;align-items:center;gap:8px;padding:6px 4px;border-radius:8px;transition:background .15s}
-    .coin-row:hover{background:#f9fafb}
-    .coin-row.active{background:#f0f4ff}
-    .note-row.active{background:#f0f9ff}
-    .coins-row{grid-template-columns:58px 1fr 62px 72px}
-    .notes-row{grid-template-columns:58px 1fr 72px}
-
-    .coin-label{font-weight:700;font-size:.95rem;color:#1f2937}
-    .coin-label span{display:block;font-size:.65rem;font-weight:400;color:#9ca3af}
-
-    input[type=number],input[type=text]{width:100%;padding:10px 8px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:1rem;color:#111827;transition:border-color .2s;text-align:center;min-height:44px;-moz-appearance:textfield;appearance:textfield}
-    input[type=number]:focus,input[type=text]:focus{outline:none;border-color:#6366f1}
-    input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{opacity:1}
-
-    .coin-count{font-size:.85rem;color:#6b7280;text-align:center}
-    .coin-count.has-value{color:#374151;font-weight:600}
-    .coin-value{font-size:.9rem;font-weight:700;color:#d1d5db;text-align:right}
-    .coin-value.has-value{color:#059669}
-    .note-value.has-value{color:#0ea5e9}
-
-    .totals-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-    .subtotal-bar{border-radius:10px;padding:12px 14px}
-    .subtotal-bar.coins{background:#f0f4ff;border:1.5px solid #c7d2fe}
-    .subtotal-bar.notes{background:#f0f9ff;border:1.5px solid #bae6fd}
-    .subtotal-label{font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
-    .subtotal-value{font-size:1.2rem;font-weight:800}
-    .subtotal-bar.coins .subtotal-value{color:#4338ca}
-    .subtotal-bar.notes .subtotal-value{color:#0284c7}
-
-    .total-bar{display:flex;justify-content:space-between;align-items:center;background:#1a1a2e;border-radius:10px;padding:14px 18px;margin-bottom:12px}
-    .total-label{font-weight:700;color:#e5e7eb;font-size:.9rem}
-    .total-label span{display:block;font-size:.72rem;font-weight:400;color:#6b7280}
-    .total-value{font-size:1.8rem;font-weight:800;color:#a5b4fc}
-
-    .closed-by{margin-bottom:12px}
-    .closed-label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;margin-bottom:6px}
-    .closed-by input[type=text]{text-align:left;padding:11px 14px;font-weight:600}
-    .closed-by input[type=text]::placeholder{color:#d1d5db;font-weight:400}
-
-    .timestamp-bar{display:flex;align-items:center;gap:10px;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 14px;margin-bottom:12px}
-    .timestamp-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;white-space:nowrap}
-    .timestamp-value{flex:1;font-size:.9rem;font-weight:600;color:#1f2937}
-    .stamp-btn{padding:6px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;white-space:nowrap}
-    .stamp-btn:hover{opacity:.85}
-
-    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-    button{padding:12px;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer;border:none;min-height:44px;transition:opacity .15s}
-    button:hover{opacity:.85}
-    #exportBtn{background:#6366f1;color:#fff}
-    #resetBtn{background:#f3f4f6;color:#374151;border:1.5px solid #e5e7eb}
-
-    .section-gap{margin-bottom:20px}
-
-    .signature-bar{width:100%;max-width:640px;text-align:center;padding:18px 12px 24px}
-    .signature-name{font-size:1.1rem;font-weight:800;color:#4338ca;letter-spacing:.04em;text-decoration:none;border-bottom:2px solid #c7d2fe;transition:color .2s,border-color .2s}
-    .signature-name:hover{color:#6366f1;border-color:#6366f1}
-    .signature-sub{font-size:.78rem;color:#9ca3af;margin-top:2px}
-
-    @media(max-width:400px){
-      .container{padding:18px 12px}
-      .totals-grid{grid-template-columns:1fr}
-      .coins-row,.coins-header{grid-template-columns:50px 1fr 54px 64px}
-      .notes-row,.notes-header{grid-template-columns:50px 1fr 64px}
-      .total-value{font-size:1.5rem}
-    }
-  </style>
 </head>
-<body>
-
-<div class="container">
-  <h1>&#x1FA99; UK Cash Calculator</h1>
-  <p class="subtitle">Coins by weight (g) &middot; Notes by quantity &middot; Updates instantly</p>
-
-  <div class="section-gap">
-    <div class="section-title coins">Coins</div>
-    <div class="table-header coins-header">
-      <span>Coin</span><span style="text-align:center">Weight (g)</span><span style="text-align:center">Count</span><span style="text-align:right">Value</span>
-    </div>
-    <div class="coin-grid" id="coinGrid"></div>
+<body style="margin:0">
+<div class="wrap">
+  <h1>Lounge Cocktail Cheat Sheet</h1>
+  <p class="sub">Autumn/Winter 2026. Learn the family, then the one thing that changes.</p>
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search drink name" autocomplete="off" aria-label="Search drink name">
+    <div class="chips" id="chips"></div>
   </div>
-
-  <div class="section-gap">
-    <div class="section-title notes">Notes</div>
-    <div class="table-header notes-header">
-      <span>Note</span><span style="text-align:center">Quantity</span><span style="text-align:right">Value</span>
-    </div>
-    <div class="notes-grid" id="notesGrid"></div>
-  </div>
-
-  <div class="totals-grid">
-    <div class="subtotal-bar coins">
-      <div class="subtotal-label">Coins Total</div>
-      <div class="subtotal-value" id="coinsTotal">&#163;0.00</div>
-    </div>
-    <div class="subtotal-bar notes">
-      <div class="subtotal-label">Notes Total</div>
-      <div class="subtotal-value" id="notesTotal">&#163;0.00</div>
-    </div>
-  </div>
-
-  <div class="total-bar">
-    <div class="total-label">Grand Total<span id="totalItems">0 items</span></div>
-    <div class="total-value" id="grandTotal">&#163;0.00</div>
-  </div>
-
-  <div class="closed-by">
-    <label class="closed-label" for="closedBy">Cash closed by</label>
-    <input type="text" id="closedBy" placeholder="Enter your name..." autocomplete="name">
-  </div>
-
-  <div class="timestamp-bar">
-    <span class="timestamp-label">Closed at</span>
-    <span class="timestamp-value" id="timestamp">&mdash;</span>
-    <button class="stamp-btn" id="stampBtn">Set Now</button>
-  </div>
-
-  <div class="btn-row">
-    <button id="exportBtn">&#x2B07; Export PDF</button>
-    <button id="resetBtn">&#x21BA; Reset All</button>
-  </div>
+  <div class="rule" id="rule">AF rule: every alcohol-free drink goes out with 2 straws.</div>
+  <div id="out"></div>
+  <p id="none" hidden>No drink matches that search.</p>
 </div>
 
-<div class="signature-bar">
-  <a class="signature-name" href="https://jejo8.github.io/port-folio/" target="_blank">JeJo Barista &middot; Aylesbury</a>
-  <div class="signature-sub">UK Cash Calculator</div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-(function() {
-  var COINS = [
-    { label: '£2',  pence: 200, weight: 12.00 },
-    { label: '£1',  pence: 100, weight: 8.75  },
-    { label: '50p', pence: 50,  weight: 8.00  },
-    { label: '20p', pence: 20,  weight: 5.00  },
-    { label: '10p', pence: 10,  weight: 6.50  },
-    { label: '5p',  pence: 5,   weight: 3.25  },
-    { label: '2p',  pence: 2,   weight: 7.12  },
-    { label: '1p',  pence: 1,   weight: 3.56  }
-  ];
-
-  var NOTES = [
-    { label: '£50', pence: 5000 },
-    { label: '£20', pence: 2000 },
-    { label: '£10', pence: 1000 },
-    { label: '£5',  pence: 500  }
-  ];
-
-  function fmtP(p) {
-    if (p === 0) return '£0.00';
-    return p >= 100 ? '£' + (p / 100).toFixed(2) : p + 'p';
-  }
-
-  // Build coin rows
-  var coinGrid = document.getElementById('coinGrid');
-  COINS.forEach(function(coin, i) {
-    var row = document.createElement('div');
-    row.className = 'coin-row coins-row';
-    row.id = 'crow' + i;
-    var label = document.createElement('div');
-    label.className = 'coin-label';
-    label.innerHTML = coin.label + '<span>' + coin.weight + 'g</span>';
-    var inp = document.createElement('input');
-    inp.type = 'number'; inp.id = 'cg' + i; inp.min = '0'; inp.step = 'any'; inp.placeholder = '0g';
-    var cnt = document.createElement('div');
-    cnt.className = 'coin-count'; cnt.id = 'ccount' + i; cnt.textContent = '—';
-    var val = document.createElement('div');
-    val.className = 'coin-value'; val.id = 'cval' + i; val.textContent = '—';
-    row.appendChild(label); row.appendChild(inp); row.appendChild(cnt); row.appendChild(val);
-    coinGrid.appendChild(row);
-    inp.addEventListener('input', recalculate);
+var F=[
+{id:"marg",t:"Margaritas",p:["50ml El Jimador, 12.5ml Cointreau, 25ml lime juice","Small Diablo or Coupe. Cubed with crushed ice cap, or no ice","Shake & strain. Lime wedge & straw"],c:["Classic: 12.5ml sugar syrup","Mango: 25ml mango purée","Strawberry: 25ml strawberry purée","Spicy: 12.5ml green chilli syrup"],d:[
+["Margarita Classic",0,[["50ml","El Jimador"],["12.5ml","Cointreau"],["12.5ml","Sugar Syrup"],["25ml","Lime Juice"]],"Small Diablo or Coupe","Cubed & crushed ice cap, or none","Shake & Strain","Lime wedge & straw"],
+["Margarita Mango",0,[["50ml","El Jimador"],["12.5ml","Cointreau"],["25ml","Mango Purée"],["25ml","Lime Juice"]],"Small Diablo or Coupe","Cubed & crushed ice cap, or none","Shake & Strain","Lime wedge & straw"],
+["Margarita Strawberry",0,[["50ml","El Jimador"],["12.5ml","Cointreau"],["25ml","Strawberry Purée"],["25ml","Lime Juice"]],"Small Diablo or Coupe","Cubed & crushed ice cap, or none","Shake & Strain","Lime wedge & straw"],
+["Margarita Spicy",0,[["50ml","El Jimador"],["12.5ml","Cointreau"],["12.5ml","Green Chilli Syrup"],["25ml","Lime Juice"]],"Small Diablo or Coupe","Cubed & crushed ice cap, or none","Shake & Strain","Lime wedge & straw"]]},
+{id:"mojito",t:"Mojitos & No-jitos",p:["25ml lime juice, 8-10 mint leaves, top with soda","Highball, crushed ice, churn","Mint sprig, lime wedge & straw"],c:["Mojito: 50ml Mount Gay Silver","No-jito: 25ml Caleno Dark & Spicy, 2 straws","Classic: add 25ml sugar syrup","Flavoured: 25ml blueberry, passion fruit or raspberry purée instead of sugar syrup"],d:[
+["Mojito",0,[["50ml","Mount Gay Silver"],["25ml","Lime Juice"],["25ml","Sugar Syrup"],["8-10","Mint Leaves"],["Top","Soda"]],"Highball","Crushed","Churn","Mint sprig, lime wedge & straw"],
+["Mojito Blueberry, Passion Fruit or Raspberry",0,[["50ml","Mount Gay Silver"],["25ml","Blueberry, Passion Fruit or Raspberry Purée"],["25ml","Lime Juice"],["8-10","Mint Leaves"],["Top","Soda"]],"Highball","Crushed","Churn","Mint sprig, lime wedge & straw"],
+["No-jito",1,[["25ml","Caleno Dark & Spicy"],["25ml","Lime Juice"],["25ml","Sugar Syrup"],["8-10","Mint Leaves"],["Top","Soda"]],"Highball","Crushed","Churn","Mint sprig, lime wedge & 2 straws"],
+["No-jito Blueberry, Passion Fruit or Raspberry",1,[["25ml","Caleno Dark & Spicy"],["25ml","Lime Juice"],["25ml","Blueberry, Passion Fruit or Raspberry Purée"],["8-10","Mint Leaves"],["Top","Soda"]],"Highball","Crushed","Churn","Mint sprig, lime wedge & 2 straws"]]},
+{id:"martini",t:"Martinis",p:["Coupe, no ice, shake & strain","All use Smirnoff Vanilla Vodka"],c:["Espresso: 50ml vodka, 3 coffee beans","Passion Fruit: 25ml vodka, prosecco on the side","Raspberry & Vanilla: 25ml vodka, freeze dried raspberries"],d:[
+["Espresso Martini",0,[["50ml","Smirnoff Vanilla Vodka"],["75ml","Think Drinks Espresso Creator Cold Brew"]],"Coupe","None","Shake & Strain","3 coffee beans"],
+["Passion Fruit Martini",0,[["25ml","Smirnoff Vanilla Vodka"],["25ml","Passoa"],["25ml","Passion Fruit Purée"],["25ml","Pineapple Juice"],["12.5ml","Lime Juice"],["25ml","Prosecco (on the side)"]],"Coupe","None","Shake & Strain","25ml Prosecco on the side"],
+["Raspberry & Vanilla Martini",0,[["25ml","Smirnoff Vanilla"],["125ml","Montzi Raspberry & Vanilla Premix"]],"Coupe","None","Shake & Strain","Freeze dried raspberries"]]},
+{id:"hurricane",t:"Hurricane glass",p:["Hurricane glass, cubed ice, shake & strain","Cherry skewer on all except Lounge on the Beach (orange slice)"],c:["Cherry Fakewell is Cherry Bakewell with Caleno and almond syrup","Pina Nolada is Pina Colada with 25ml Caleno, no bitters"],d:[
+["Cherry Bakewell",0,[["25ml","Luxardo Amaretto"],["25ml","Mount Gay Rum"],["25ml","Sweetbird Caramel"],["125ml","Cherry Juice"]],"Hurricane","Cubed","Shake & Strain","Cherry skewer & straw"],
+["Cherry Fakewell",1,[["25ml","Caleno Dark & Spicy"],["25ml","SB Almond Syrup"],["125ml","Cherry Juice"]],"Hurricane","Cubed","Shake & Strain","Cherry skewer & 2 straws"],
+["Pina Colada",0,[["50ml","Havana 3yo Rum"],["50ml","Re'al Coconut Cream"],["50ml","Pineapple Juice"],["Dash","Angostura Bitters (garnish)"]],"Hurricane","Cubed","Shake & Strain","Cherry skewer, Angostura bitters & straw"],
+["Pina Nolada",1,[["25ml","Caleno Dark & Spicy"],["50ml","Re'al Coconut Cream"],["50ml","Pineapple Juice"]],"Hurricane","Cubed","Shake & Strain","Cherry skewer & 2 straws"],
+["Lounge on the Beach",0,[["25ml","Smirnoff Red Vodka"],["25ml","Archers"],["25ml","Pineapple Juice"],["50ml","Orange Juice"],["50ml","Cranberry Juice (float)"]],"Hurricane","Cubed & crushed ice cap","Shake & Strain","Orange slice & straw"]]},
+{id:"spritz",t:"Spritzes",p:["Wine glass, cubed ice","Elderglow is the Elderflower Spritz with Tanqueray 0.0% instead of vodka"],c:["Aperol and Wild Berry: build","Elderflower and Elderglow: shake & strain"],d:[
+["Aperol Spritz",0,[["50ml","Aperol"],["75ml","Prosecco"],["25ml","Soda"]],"Wine","Cubed","Build","Orange slice & straw"],
+["Elderflower Spritz",0,[["50ml","Smirnoff Vodka"],["25ml","Lemon Juice"],["25ml","BSCo Elderflower"],["25ml","Apple Juice"],["8-10","Mint Leaves"],["50ml","Lemonade"]],"Wine Glass","Cubed","Shake & Strain","Cucumber slice, mint sprig & straw"],
+["Elderglow Spritz",1,[["50ml","Tanqueray 0.0%"],["25ml","Lemon Juice"],["25ml","BSCo Elderflower Syrup"],["25ml","Apple Juice"],["8-10","Mint Leaves"],["50ml","Lemonade"]],"Wine Glass","Cubed","Shake & Strain","Mint sprig, cucumber slice & 2 sip straws"],
+["Wild Berry Spritz",0,[["25ml","Montzi Blackberry"],["25ml","Blueberry Purée"],["8-10","Mint Leaves"],["50ml","Prosecco"],["Top","Soda"]],"Wine Glass","Cubed","Build","Mint sprig & straw"]]},
+{id:"classics",t:"Other cocktails",p:["All on cubed ice","Virgin Mary is the Bloody Mary without vodka","Pink AF Cloud is Pink Cloud with Tanqueray 0.0% and no vanilla vodka"],d:[
+["Amaretto Sour",0,[["50ml","Luxardo Amaretto"],["25ml","Lemon Juice"],["25ml","Sugar Syrup"],["25ml","Orange Juice"]],"Small Diablo","Cubed","Shake & Strain","Orange slice & straw"],
+["Bloody Mary",0,[["50ml","Smirnoff Red Vodka"],["200ml","Bloody Tomato Juice"]],"Panelled Cooler","Cubed","Build & Stir","Magic Dust rim, tortilla chip, lemon slice and jalapeño skewer & straw"],
+["Virgin Mary",1,[["200ml","Bloody Tomato Juice"]],"Panelled Cooler","Cubed","Build & Stir","Magic Dust rim, tortilla chip, lemon slice and jalapeño skewer & 2 straws"],
+["Long Island Iced Tea",0,[["12.5ml","Solovey Vodka"],["12.5ml","Gordon's Gin"],["12.5ml","El Jimador Tequila"],["12.5ml","Havana 3yo Rum"],["12.5ml","Cointreau"],["25ml","Fresh Lemon Juice"],["150ml","Paddle Cola"]],"Panelled Cooler","Cubed","Shake & Float","Lemon wedge & straw"],
+["Mango Tiki Shake",0,[["25ml","Morgans Spiced Rum"],["25ml","Mount Gay Rum"],["25ml","Pineapple Juice"],["25ml","Mango Purée"],["25ml","Lime Juice"]],"Large Diablo","Cubed","Shake & Strain","Mint sprig, cherry & dash of Angostura bitters"],
+["Peach Iced Tea-quila",0,[["25ml","El Jimador Tequila"],["25ml","Archers Peach Schnapps"],["50ml","English Breakfast Tea (cold)"],["25ml","Lemon Juice"],["25ml","Sugar Syrup"]],"Highball","Cubed","Shake & Strain","Mint sprig, lemon slice & straw"],
+["Pink Cloud",0,[["37.5ml","Tanqueray"],["12.5ml","Smirnoff Vanilla"],["12.5ml","Elderflower Syrup"],["25ml","Coco Re'al"],["50ml","Cranberry Juice"],["25ml","Lime Juice"]],"Gin Goblet","Cubed","Shake & Strain","Lime wedge & mint sprig"],
+["Pink AF Cloud",1,[["?","Tanqueray 0.0%"],["12.5ml","Elderflower Syrup"],["25ml","Coco Re'al"],["50ml","Cranberry Juice"],["25ml","Lime Juice"]],"Gin Goblet","Cubed","Shake & Strain","Lime wedge, mint sprig & 2 straws","The menu shows no measure for Tanqueray 0.0%. Check with your manager."]]},
+{id:"homemade",t:"Homemade",p:["Cubed ice, shake & strain (Pink Lemonade is the only build)","Panelled Cooler, except the two Coolers: Large Diablo","Top with soda, except Orange & Passionfruit Cooler and Bubble Tea: water"],d:[
+["Elderflower Cooler",0,[["50ml","BSCo Elderflower Syrup"],["25ml","Fresh Lemon Juice"],["Top","Soda"]],"Large Diablo","Cubed","Shake & Strain","Cucumber slice, mint sprig & straw"],
+["Tropical Dream",0,[["25ml","Mango Purée"],["25ml","BSCo Coconut Syrup"],["25ml","Pineapple Juice"],["Top","Soda"]],"Panelled Cooler","Cubed","Shake & Strain","Orange slice & straw"],
+["Pink Lemonade",0,[["25ml","Pink Lemonade Syrup"],["25ml","Lemon Juice"],["25ml","Raspberry Purée"],["Top","Soda"]],"Panelled Cooler","Cubed","Build","Lemon wedge & straw"],
+["Orange & Passionfruit Cooler",0,[["?","Orange Juice"],["25ml","Passionfruit Purée"],["Top","Water"]],"Large Diablo","Cubed","Shake & Strain","Orange slice & straw","The orange juice measure is cut off on the menu. Check with your manager."],
+["Sour Cherryade",0,[["50ml","Cherry Purée"],["25ml","Apple Juice"],["12.5ml","Lime Juice"],["Top","Soda"]],"Panelled Cooler","Cubed","Shake & Strain","Cherry & lime skewer, straw"],
+["Passion Fruit & Strawberry Bubble Tea",0,[["25ml","Passionfruit Purée"],["50ml","English Breakfast Tea (cold)"],["25ml","Sugar Syrup"],["12.5ml","Lime Juice"],["Top","Water"],["50g","Strawberry Boba"]],"Panelled Cooler","Cubed","Shake & Strain","Bubble tea straw"]]},
+{id:"shots",t:"Shots",p:["Every shot totals 25ml"],d:[
+["Lemon Drop",0,[["12.5ml","Limoncello"],["12.5ml","Smirnoff Vanilla"],["Rim","Sugar"]]],
+["Baby Guinness",0,[["20ml","Kahlua"],["5ml","Baileys, layered on top"]]],
+["PB & J",0,[["12.5ml","Chambord"],["12.5ml","Frangelico"]]],
+["Tequila Rose",0,[["25ml","Tequila Rose"]]]]}
+];
+function e(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+var out=document.getElementById("out"),chips=document.getElementById("chips"),h="",ch="";
+F.forEach(function(f){
+  ch+='<button class="chip" type="button" data-go="'+f.id+'">'+e(f.t)+'</button>';
+  h+='<section id="'+f.id+'"><h2>'+e(f.t)+'</h2><div class="pattern"><b class="t">Same every time</b><ul>'+f.p.map(function(x){return"<li>"+e(x)+"</li>"}).join("")+"</ul>";
+  if(f.c)h+='<b class="t">What changes</b><ul>'+f.c.map(function(x){return"<li>"+e(x)+"</li>"}).join("")+"</ul>";
+  h+='</div><div class="list">';
+  f.d.forEach(function(d){
+    var s=d[0].toLowerCase();
+    h+='<details data-s="'+e(s).replace(/"/g,"&quot;")+'"><summary><span class="n">'+e(d[0])+"</span>"+(d[1]?'<span class="af">AF</span>':"")+'</summary><div class="body"><ul class="ing">'+
+      d[2].map(function(i){return'<li><span class="a">'+e(i[0])+"</span><span>"+e(i[1])+"</span></li>"}).join("")+"</ul>";
+    if(d[7])h+='<div class="check">'+e(d[7])+"</div>";
+    if(d[3])h+='<dl class="meta"><dt>Glass</dt><dd>'+e(d[3])+"</dd><dt>Ice</dt><dd>"+e(d[4])+"</dd><dt>Method</dt><dd>"+e(d[5])+"</dd><dt>Garnish</dt><dd>"+e(d[6])+"</dd></dl>";
+    h+="</div></details>";
   });
-
-  // Build notes rows
-  var notesGrid = document.getElementById('notesGrid');
-  NOTES.forEach(function(note, i) {
-    var row = document.createElement('div');
-    row.className = 'coin-row notes-row';
-    row.id = 'nrow' + i;
-    var label = document.createElement('div');
-    label.className = 'coin-label';
-    label.innerHTML = note.label + '<span>note</span>';
-    var inp = document.createElement('input');
-    inp.type = 'number'; inp.id = 'nq' + i; inp.min = '0'; inp.step = '1'; inp.placeholder = '0';
-    var val = document.createElement('div');
-    val.className = 'coin-value note-value'; val.id = 'nval' + i; val.textContent = '—';
-    row.appendChild(label); row.appendChild(inp); row.appendChild(val);
-    notesGrid.appendChild(row);
-    inp.addEventListener('input', recalculate);
+  h+="</div></section>";
+});
+out.innerHTML=h;chips.innerHTML=ch;
+chips.addEventListener("click",function(ev){
+  var b=ev.target.closest("[data-go]");if(!b)return;
+  q.value="";filter();
+  document.getElementById(b.dataset.go).scrollIntoView({behavior:"smooth",block:"start"});
+});
+var q=document.getElementById("q");
+function filter(){
+  var v=q.value.trim().toLowerCase(),any=false;
+  document.querySelectorAll("section").forEach(function(sec){
+    var n=0;
+    sec.querySelectorAll("details").forEach(function(d){
+      var m=!v||d.dataset.s.indexOf(v)>-1;d.hidden=!m;d.open=!!v&&m;if(m)n++;
+    });
+    sec.hidden=!n;sec.querySelector(".pattern").hidden=!!v;if(n)any=true;
   });
-
-  function recalculate() {
-    var coinPence = 0, notePence = 0, totalItems = 0;
-
-    COINS.forEach(function(coin, i) {
-      var g = parseFloat(document.getElementById('cg' + i).value) || 0;
-      var countEl = document.getElementById('ccount' + i);
-      var valEl = document.getElementById('cval' + i);
-      var row = document.getElementById('crow' + i);
-      if (g > 0) {
-        var count = Math.round(g / coin.weight);
-        var p = count * coin.pence;
-        coinPence += p; totalItems += count;
-        countEl.textContent = count; countEl.className = 'coin-count has-value';
-        valEl.textContent = fmtP(p); valEl.className = 'coin-value has-value';
-        row.classList.add('active');
-      } else {
-        countEl.textContent = '—'; countEl.className = 'coin-count';
-        valEl.textContent = '—'; valEl.className = 'coin-value';
-        row.classList.remove('active');
-      }
-    });
-
-    NOTES.forEach(function(note, i) {
-      var qty = parseInt(document.getElementById('nq' + i).value) || 0;
-      var valEl = document.getElementById('nval' + i);
-      var row = document.getElementById('nrow' + i);
-      if (qty > 0) {
-        var p = qty * note.pence;
-        notePence += p; totalItems += qty;
-        valEl.textContent = fmtP(p); valEl.className = 'coin-value note-value has-value';
-        row.classList.add('active');
-      } else {
-        valEl.textContent = '—'; valEl.className = 'coin-value note-value';
-        row.classList.remove('active');
-      }
-    });
-
-    document.getElementById('coinsTotal').textContent = fmtP(coinPence);
-    document.getElementById('notesTotal').textContent = fmtP(notePence);
-    document.getElementById('grandTotal').textContent = fmtP(coinPence + notePence);
-    document.getElementById('totalItems').textContent = totalItems > 0 ? totalItems + ' coins & notes' : '0 items';
-  }
-
-  document.getElementById('stampBtn').addEventListener('click', function() {
-    var now = new Date();
-    var ts = now.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short', year:'numeric' })
-      + ' - ' + now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-    document.getElementById('timestamp').textContent = ts;
-  });
-
-  document.getElementById('resetBtn').addEventListener('click', function() {
-    COINS.forEach(function(_, i) { document.getElementById('cg' + i).value = ''; });
-    NOTES.forEach(function(_, i) { document.getElementById('nq' + i).value = ''; });
-    document.getElementById('closedBy').value = '';
-    document.getElementById('timestamp').textContent = '—';
-    recalculate();
-  });
-
-  document.getElementById('exportBtn').addEventListener('click', function() {
-    var jsPDF = window.jspdf.jsPDF;
-    var doc = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait' });
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('en-GB').replace(/\//g, '-');
-    var W = 210, L = 14, R = 196;
-    var y = 0;
-
-    // Collect data
-    var coinPence = 0, notePence = 0;
-    var coinRows = [];
-    COINS.forEach(function(coin, i) {
-      var g = parseFloat(document.getElementById('cg' + i).value) || 0;
-      var count = g > 0 ? Math.round(g / coin.weight) : 0;
-      var p = count * coin.pence;
-      coinPence += p;
-      coinRows.push({ label: coin.label, g: g, count: count, p: p });
-    });
-    var noteRows = [];
-    NOTES.forEach(function(note, i) {
-      var qty = parseInt(document.getElementById('nq' + i).value) || 0;
-      var p = qty * note.pence;
-      notePence += p;
-      noteRows.push({ label: note.label, qty: qty, p: p });
-    });
-    var grandTotal = coinPence + notePence;
-    var closedBy = document.getElementById('closedBy').value || 'Not entered';
-    var rawTs = document.getElementById('timestamp').textContent.trim();
-    // jsPDF built-in font only supports Latin-1 — strip non-latin chars
-    var timestamp = (rawTs === '—' || rawTs === '' || rawTs === '—') ? 'Not set' : rawTs.replace(/·/g, '-').replace(/—/g, '-').replace(/–/g, '-');
-
-    // HEADER
-    doc.setFillColor(99, 102, 241);
-    doc.rect(0, 0, W, 24, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(15); doc.setFont('helvetica', 'bold');
-    doc.text('Cash Closing', L, 11);
-    doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-    doc.text(now.toLocaleDateString('en-GB', { weekday:'long', day:'2-digit', month:'long', year:'numeric' }), L, 18);
-    doc.setFontSize(8.5); doc.setFont('helvetica', 'bold');
-    doc.text('Closed by: ' + closedBy, R, 11, { align:'right' });
-    doc.setFont('helvetica', 'normal');
-    var timeOnly = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
-    doc.text('Time: ' + timeOnly, R, 18, { align:'right' });
-    y = 32;
-
-    // COINS SECTION
-    doc.setFillColor(99, 102, 241);
-    doc.roundedRect(L, y, 22, 6, 2, 2, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(7); doc.setFont('helvetica', 'bold');
-    doc.text('COINS', L + 11, y + 4.3, { align:'center' });
-    y += 10;
-
-    // Coins table header
-    doc.setTextColor(140, 140, 155);
-    doc.setFontSize(7); doc.setFont('helvetica', 'bold');
-    doc.text('COIN', L, y);
-    doc.text('WEIGHT', 80, y, { align:'center' });
-    doc.text('COUNT', 130, y, { align:'center' });
-    doc.text('VALUE', R, y, { align:'right' });
-    y += 2;
-    doc.setDrawColor(210, 210, 220); doc.setLineWidth(0.3);
-    doc.line(L, y, R, y);
-    y += 5;
-
-    coinRows.forEach(function(r, idx) {
-      if (idx % 2 === 0) {
-        doc.setFillColor(248, 249, 255);
-        doc.rect(L, y - 3.5, R - L, 7, 'F');
-      }
-      doc.setTextColor(30, 30, 45);
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-      doc.text(r.label, L, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(r.g > 0 ? r.g + 'g' : '-', 80, y, { align:'center' });
-      doc.text(r.count > 0 ? String(r.count) : '-', 130, y, { align:'center' });
-      if (r.p > 0) { doc.setFont('helvetica', 'bold'); doc.setTextColor(5, 150, 105); }
-      doc.text(r.p > 0 ? fmtP(r.p) : '-', R, y, { align:'right' });
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 45);
-      y += 7;
-    });
-
-    // Coins subtotal
-    doc.setDrawColor(100, 80, 200); doc.setLineWidth(0.4);
-    doc.line(L, y - 1, R, y - 1);
-    doc.setTextColor(67, 56, 202); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('Coins Total', L, y + 4);
-    doc.text(fmtP(coinPence), R, y + 4, { align:'right' });
-    y += 13;
-
-    // NOTES SECTION
-    doc.setFillColor(14, 165, 233);
-    doc.roundedRect(L, y, 22, 6, 2, 2, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(7); doc.setFont('helvetica', 'bold');
-    doc.text('NOTES', L + 11, y + 4.3, { align:'center' });
-    y += 10;
-
-    // Notes table header
-    doc.setTextColor(140, 140, 155);
-    doc.setFontSize(7); doc.setFont('helvetica', 'bold');
-    doc.text('NOTE', L, y);
-    doc.text('QUANTITY', 110, y, { align:'center' });
-    doc.text('VALUE', R, y, { align:'right' });
-    y += 2;
-    doc.setDrawColor(210, 210, 220); doc.setLineWidth(0.3);
-    doc.line(L, y, R, y);
-    y += 5;
-
-    noteRows.forEach(function(r, idx) {
-      if (idx % 2 === 0) {
-        doc.setFillColor(240, 249, 255);
-        doc.rect(L, y - 3.5, R - L, 7, 'F');
-      }
-      doc.setTextColor(30, 30, 45);
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-      doc.text(r.label, L, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(r.qty > 0 ? String(r.qty) : '-', 110, y, { align:'center' });
-      if (r.p > 0) { doc.setFont('helvetica', 'bold'); doc.setTextColor(2, 132, 199); }
-      doc.text(r.p > 0 ? fmtP(r.p) : '-', R, y, { align:'right' });
-      doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 45);
-      y += 7;
-    });
-
-    // Notes subtotal
-    doc.setDrawColor(2, 132, 199); doc.setLineWidth(0.4);
-    doc.line(L, y - 1, R, y - 1);
-    doc.setTextColor(2, 132, 199); doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.text('Notes Total', L, y + 4);
-    doc.text(fmtP(notePence), R, y + 4, { align:'right' });
-    y += 14;
-
-    // GRAND TOTAL BOX
-    doc.setFillColor(26, 26, 46);
-    doc.roundedRect(L, y, R - L, 18, 3, 3, 'F');
-    doc.setTextColor(200, 200, 210);
-    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
-    doc.text('GRAND TOTAL', L + 6, y + 11);
-    doc.setTextColor(165, 180, 252);
-    doc.setFontSize(17); doc.setFont('helvetica', 'bold');
-    doc.text(fmtP(grandTotal), R - 6, y + 12, { align:'right' });
-    y += 26;
-
-    // FOOTER
-    doc.setDrawColor(200, 200, 220); doc.setLineWidth(0.3);
-    doc.line(L, y, R, y);
-    y += 7;
-    doc.setTextColor(99, 102, 241);
-    doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-    doc.textWithLink('JeJo Barista - Aylesbury', W / 2, y, { align:'center', url:'https://jejo8.github.io/port-folio/' });
-
-    doc.save('Cash Closing ' + dateStr + '.pdf');
-  });
-})();
+  document.getElementById("rule").hidden=!!v;
+  document.getElementById("none").hidden=any;
+}
+q.addEventListener("input",filter);
 </script>
+<script>
+function gc(p,t){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t,event:true})}catch(x){}}
+document.getElementById("out").addEventListener("toggle",function(ev){var d=ev.target;if(d.open&&!q.value.trim())gc("drink: "+d.querySelector(".n").textContent,"Drink opened")},true);
+var st;q.addEventListener("input",function(){clearTimeout(st);st=setTimeout(function(){var v=q.value.trim().toLowerCase();if(v.length>2)gc("search: "+v,"Search")},1500)});
+</script>
+<script data-goatcounter="https://jejo.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
